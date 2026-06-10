@@ -1,0 +1,12 @@
+version: "3.9"
+
+services:
+  ngrok:
+    image: ngrok/ngrok:latest
+    command: http api:8000 --domain=${NGROK_STATIC_DOMAIN}
+    environment:
+      - NGROK_AUTHTOKEN=${NGROK_AUTHTOKEN}
+    ports:
+      - "4040:4040"
+    depends_on:
+      - api

@@ -1,0 +1,8 @@
+# Normalize line endings: LF in the repo, auto on checkout
+* text=auto
+
+# Shell scripts must stay LF even on Windows checkouts
+*.sh text eol=lf
+
+# Lockfiles and generated artifacts are not diffed as text noise
+uv.lock linguist-generated=true
