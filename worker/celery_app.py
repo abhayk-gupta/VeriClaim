@@ -21,9 +21,8 @@ celery_app = Celery(
     backend=settings.celery_result_backend,
     include=[
         "worker.tasks.send_whatsapp",
-        # Registered in later phases:
-        # "worker.tasks.process_claim",
-        # "worker.tasks.outbound_call",
+        "worker.tasks.process_claim",
+        "worker.tasks.outbound_call",
     ],
 )
 

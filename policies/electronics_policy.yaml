@@ -1,0 +1,30 @@
+# Electronics policy — stricter window, lower fraud tolerance, higher confidence bar.
+policy_id: electronics
+display_name: "Electronics Policy"
+
+max_claim_days: 14
+eligible_claim_types:
+  - damaged
+  - not_received
+  - wrong_item
+  - missing_parts
+
+preferred_resolution: replacement
+
+min_confidence: 0.75
+
+max_clarifications: 2
+
+fraud:
+  auto_approve_threshold: 0.25
+  escalate_threshold: 0.50
+  repeat_claim_window_days: 90
+  repeat_claim_count_trigger: 1
+  high_value_threshold_usd: 100
+  too_soon_hours: 24
+  weights:
+    reused_image: 0.45
+    obscured_label: 0.20
+    repeat_claimant: 0.30
+    too_soon_after_delivery: 0.10
+    high_value_new_customer: 0.15

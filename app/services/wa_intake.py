@@ -65,6 +65,35 @@ async def reset_session(phone: str) -> None:
     await redis.delete(f"{_SESSION_PREFIX}{phone}")
 
 
+async def seed_media_session(
+    phone: str,
+    *,
+    claim_id: str,
+    order_id: str,
+    order_external: str,
+    customer_id: str,
+    claim_type: str,
+) -> None:
+    """
+    Pre-populate a WhatsApp session for a claim that was started on another
+    channel (e.g. a voice call). When the customer then sends photos over
+    WhatsApp, the inbound router finds this active claim via
+    `get_active_claim_id()` and attaches the media correctly.
+    """
+    session = {
+        "phone": phone,
+        "history": [],
+        "intent": "file_claim",
+        "claim_id": claim_id,
+        "order_id": order_id,
+        "order_external": order_external,
+        "customer_id": customer_id,
+        "claim_type": claim_type,
+        "awaiting": "media_item",
+    }
+    await _save_session(phone, session)
+
+
 # ── Text handler ───────────────────────────────────────────────────────────────
 
 async def handle_text_message(db: AsyncSession, phone: str, text: str) -> str:

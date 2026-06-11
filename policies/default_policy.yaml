@@ -1,0 +1,36 @@
+# Default store claim policy.
+# Loaded by app/langgraph_agent/tools/policy_loader.py keyed by Order.policy_id.
+policy_id: default
+display_name: "Default Store Policy"
+
+# Eligibility
+max_claim_days: 30                # claim must be filed within N days of delivery
+eligible_claim_types:
+  - damaged
+  - not_received
+  - wrong_item
+  - missing_parts
+
+# Resolution preference when a claim is approved
+preferred_resolution: replacement  # replacement | refund
+
+# Confidence floor below which the verdict is treated as borderline -> clarify
+min_confidence: 0.70
+
+# Max outbound clarification attempts before escalating to a human
+max_clarifications: 2
+
+# Fraud scoring
+fraud:
+  auto_approve_threshold: 0.30     # score < this AND eligible -> approve
+  escalate_threshold: 0.60         # score >= this -> escalate to human
+  repeat_claim_window_days: 90
+  repeat_claim_count_trigger: 2    # > this many prior claims in window -> signal
+  high_value_threshold_usd: 200
+  too_soon_hours: 24               # claim filed < N h after delivery -> signal
+  weights:
+    reused_image: 0.40
+    obscured_label: 0.15
+    repeat_claimant: 0.25
+    too_soon_after_delivery: 0.10
+    high_value_new_customer: 0.10
