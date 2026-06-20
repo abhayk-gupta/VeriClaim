@@ -1,5 +1,5 @@
-from typing import Optional, Any, List
-from pydantic import BaseModel
+from typing import Optional, List
+from pydantic import BaseModel, Field
 
 
 # ── Twilio Voice ──────────────────────────────────────────────────────────────
@@ -44,21 +44,16 @@ class WAImage(BaseModel):
 
 class WAMessage(BaseModel):
     id: str
-    from_: str
+    # Meta sends "from" (a Python reserved word). The alias makes this work both
+    # standalone AND when nested inside WAWebhookPayload; populate_by_name also
+    # accepts "from_" directly.
+    from_: str = Field(alias="from")
     timestamp: str
     type: str
     text: Optional[WATextBody] = None
     image: Optional[WAImage] = None
 
     model_config = {"populate_by_name": True, "extra": "allow"}
-
-    # Meta sends "from" which is a Python reserved word
-    @classmethod
-    def model_validate(cls, obj: Any, *args, **kwargs):
-        if isinstance(obj, dict) and "from" in obj:
-            obj = dict(obj)
-            obj["from_"] = obj.pop("from")
-        return super().model_validate(obj, *args, **kwargs)
 
 
 class WAValue(BaseModel):
