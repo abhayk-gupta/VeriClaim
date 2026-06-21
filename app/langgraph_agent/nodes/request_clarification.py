@@ -58,7 +58,7 @@ async def request_clarification(state: ClaimState) -> dict:
 
         claim.clarification_count = (claim.clarification_count or 0) + 1
         claim.status = ClaimStatus.PENDING_CLARIFICATION
-        claim.updated_at = datetime.now(timezone.utc)
+        claim.updated_at = datetime.now(timezone.utc).replace(tzinfo=None)
 
         session.add(AuditLog(
             claim_id=claim.id,

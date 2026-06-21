@@ -71,7 +71,7 @@ async def attach_media(
     else:
         raise ValueError(f"Unknown media side: {side!r}")
 
-    claim.media_received_at = datetime.now(timezone.utc)
+    claim.media_received_at = datetime.now(timezone.utc).replace(tzinfo=None)
 
     if claim.media_r2_key_item and claim.media_r2_key_label:
         claim.status = ClaimStatus.MEDIA_RECEIVED

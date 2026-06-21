@@ -108,7 +108,7 @@ def _apply_analysis(claim: Claim, state: ClaimState) -> None:
     status_value = state.get("final_status", ClaimStatus.ANALYZING.value)
     claim.status = ClaimStatus(status_value)
     if status_value in _TERMINAL_STATUSES:
-        claim.resolved_at = datetime.now(timezone.utc)
+        claim.resolved_at = datetime.now(timezone.utc).replace(tzinfo=None)
         claim.resolved_by = "ai_agent"
 
 

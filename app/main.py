@@ -40,11 +40,11 @@ app.add_middleware(
 app.include_router(health_router)
 
 # Phase 2 routers (added as they are implemented)
-# from app.routers.whatsapp import router as whatsapp_router
-# from app.routers.voice import router as voice_router
-# from app.routers.claims import router as claims_router
-# from app.routers.orders import router as orders_router
-# app.include_router(whatsapp_router, prefix="/webhooks")
-# app.include_router(voice_router, prefix="/webhooks")
-# app.include_router(claims_router, prefix="/api/v1")
-# app.include_router(orders_router, prefix="/api/v1")
+from app.routers.whatsapp import router as whatsapp_router
+from app.routers.voice import router as voice_router
+from app.routers.claims import router as claims_router
+from app.routers.orders import router as orders_router
+app.include_router(whatsapp_router, prefix="/webhooks")
+app.include_router(voice_router, prefix="/webhooks")
+app.include_router(claims_router, prefix="/api/v1")
+app.include_router(orders_router, prefix="/api/v1")

@@ -37,8 +37,8 @@ class InteractionLog(Base):
     claim_id: Mapped[Optional[uuid.UUID]] = mapped_column(ForeignKey("claims.id"), index=True, nullable=True)
     customer_id: Mapped[Optional[uuid.UUID]] = mapped_column(ForeignKey("customers.id"), index=True, nullable=True)
 
-    channel: Mapped[InteractionChannel] = mapped_column(SQLEnum(InteractionChannel))
-    direction: Mapped[InteractionDirection] = mapped_column(SQLEnum(InteractionDirection))
+    channel: Mapped[InteractionChannel] = mapped_column(SQLEnum(InteractionChannel, values_callable=lambda x: [e.value for e in x]))
+    direction: Mapped[InteractionDirection] = mapped_column(SQLEnum(InteractionDirection, values_callable=lambda x: [e.value for e in x]))
 
     # e.g. "text_received", "image_received", "call_started", "claim_created",
     # "verdict_issued", "clarification_requested", "status_check", "resolution_sent"

@@ -21,7 +21,7 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from app.config import get_settings
 from app.models.customer import Customer
-from app.models.order import Order, OrderStatus
+from app.models.order import Order
 
 settings = get_settings()
 
@@ -59,9 +59,10 @@ async def seed():
             session.add_all([customer1, customer2, customer3])
             await session.flush()
 
-            now = datetime.now(timezone.utc)
+            # Ensure 'now' is completely timezone-naive to match the database
+            now = datetime.now(timezone.utc).replace(tzinfo=None)
 
-            # ── Orders ─────────────────────────────────────────────────────────
+            # ── Orders (Using explicit lowercase strings to match PG Enum values) ──
             orders = [
                 Order(
                     id=uuid.UUID("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"),
@@ -71,7 +72,7 @@ async def seed():
                     product_description="Sony WH-1000XM5 Wireless Headphones — Black",
                     order_value_usd=Decimal("279.99"),
                     currency="USD",
-                    status=OrderStatus.DELIVERED,
+                    status="delivered",
                     tracking_number="1Z999AA10123456784",
                     carrier="UPS",
                     shipped_at=now - timedelta(days=10),
@@ -86,7 +87,7 @@ async def seed():
                     product_description="Ceramic Coffee Mug Set (4 pack) — Ocean Blue",
                     order_value_usd=Decimal("34.99"),
                     currency="USD",
-                    status=OrderStatus.DELIVERED,
+                    status="delivered",
                     tracking_number="9400111899223775357977",
                     carrier="USPS",
                     shipped_at=now - timedelta(days=7),
@@ -101,7 +102,7 @@ async def seed():
                     product_description="Merino Wool Sweater — Size M — Forest Green",
                     order_value_usd=Decimal("89.00"),
                     currency="USD",
-                    status=OrderStatus.DELIVERED,
+                    status="delivered",
                     shipped_at=now - timedelta(days=14),
                     delivered_at=now - timedelta(days=8),
                     policy_id="default",
@@ -114,7 +115,7 @@ async def seed():
                     product_description="USB-C 100W Charging Cable (2-pack)",
                     order_value_usd=Decimal("19.99"),
                     currency="USD",
-                    status=OrderStatus.SHIPPED,
+                    status="shipped",
                     tracking_number="1Z999AA10123456999",
                     carrier="UPS",
                     shipped_at=now - timedelta(days=1),
@@ -128,7 +129,7 @@ async def seed():
                     product_description="Glass Food Storage Containers (10 piece set)",
                     order_value_usd=Decimal("55.00"),
                     currency="USD",
-                    status=OrderStatus.DELIVERED,
+                    status="delivered",
                     shipped_at=now - timedelta(days=20),
                     delivered_at=now - timedelta(days=15),
                     policy_id="default",

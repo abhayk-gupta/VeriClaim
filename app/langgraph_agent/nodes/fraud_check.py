@@ -79,11 +79,16 @@ async def fraud_check(state: ClaimState) -> dict:
     delivered = _parse_iso(state.get("delivered_at"))
     filed = _parse_iso(state.get("claim_created_at")) or datetime.now(timezone.utc)
     too_soon_hours = fraud_cfg.get("too_soon_hours", 24)
-    if delivered and (filed - delivered) < timedelta(hours=too_soon_hours):
-        signals["too_soon_after_delivery"] = {
-            "weight": weights.get("too_soon_after_delivery", 0.10),
-            "detail": f"Claim filed within {too_soon_hours}h of delivery.",
-        }
+    if delivered:
+        # Ensure both sides are stripped of timezone attachments
+        filed_naive = filed.replace(tzinfo=None) if filed.tzinfo else filed
+        delivered_naive = delivered.replace(tzinfo=None) if delivered.tzinfo else delivered
+        
+        if (filed_naive - delivered_naive) < timedelta(hours=too_soon_hours):
+            signals["too_soon_after_delivery"] = {
+                "weight": weights.get("too_soon_after_delivery", 0.10),
+                "detail": f"Claim filed within {too_soon_hours}h of delivery.",
+            }
 
     # ── high-value order from a first-time claimant ────────────────────────────
     high_value_threshold = fraud_cfg.get("high_value_threshold_usd", 200)
@@ -105,8 +110,7 @@ async def _claim_history(customer_id: str | None, current_claim_id: str | None, 
     if not customer_id:
         return 0, 0
     cid = uuid.UUID(customer_id)
-    cutoff = datetime.now(timezone.utc) - timedelta(days=window_days)
-
+    cutoff = (datetime.now(timezone.utc) - timedelta(days=window_days)).replace(tzinfo=None)
     async with AsyncSessionLocal() as session:
         total = await session.scalar(
             select(func.count()).select_from(Claim).where(Claim.customer_id == cid)

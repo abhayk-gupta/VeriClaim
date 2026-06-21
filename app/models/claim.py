@@ -47,9 +47,9 @@ class Claim(Base):
     id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4)
     order_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("orders.id"), index=True)
     customer_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("customers.id"), index=True)
-    claim_type: Mapped[Optional[ClaimType]] = mapped_column(SQLEnum(ClaimType), nullable=True)
-    status: Mapped[ClaimStatus] = mapped_column(SQLEnum(ClaimStatus), default=ClaimStatus.PENDING_MEDIA)
-    outcome: Mapped[Optional[ClaimOutcome]] = mapped_column(SQLEnum(ClaimOutcome), nullable=True)
+    claim_type: Mapped[Optional[ClaimType]] = mapped_column(SQLEnum(ClaimType, values_callable=lambda x: [e.value for e in x]), nullable=True)
+    status: Mapped[ClaimStatus] = mapped_column(SQLEnum(ClaimStatus, values_callable=lambda x: [e.value for e in x]), default=ClaimStatus.PENDING_MEDIA)
+    outcome: Mapped[Optional[ClaimOutcome]] = mapped_column(SQLEnum(ClaimOutcome, values_callable=lambda x: [e.value for e in x]), nullable=True)
 
     # Voice bot data
     call_sid: Mapped[Optional[str]] = mapped_column(String(50), nullable=True)
