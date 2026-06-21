@@ -13,12 +13,12 @@ TEST_DATABASE_URL = "postgresql+asyncpg://vericlaim:secret@localhost:5432/vericl
 test_engine = create_async_engine(TEST_DATABASE_URL, echo=False)
 TestSessionLocal = async_sessionmaker(bind=test_engine, class_=AsyncSession, expire_on_commit=False)
 
-
 @pytest.fixture(scope="session")
 def event_loop():
     loop = asyncio.new_event_loop()
     yield loop
     loop.close()
+
 
 
 @pytest_asyncio.fixture(scope="session", autouse=True)
@@ -40,7 +40,8 @@ async def db_session():
 @pytest_asyncio.fixture
 async def client(db_session: AsyncSession):
     async def override_get_session():
-        yield db_session
+        async with TestSessionLocal() as session:
+            yield session
 
     app.dependency_overrides[get_session] = override_get_session
 

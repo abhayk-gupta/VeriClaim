@@ -30,6 +30,11 @@ SessionLocal = async_sessionmaker(bind=engine, class_=AsyncSession, expire_on_co
 
 
 async def seed():
+    async with engine.begin() as conn:
+        from app.database import Base
+        await conn.run_sync(Base.metadata.drop_all)
+        await conn.run_sync(Base.metadata.create_all)
+
     async with SessionLocal() as session:
         async with session.begin():
 
@@ -139,6 +144,32 @@ async def seed():
             ]
 
             session.add_all(orders)
+            await session.flush()
+            
+            from app.models.claim import Claim, ClaimStatus, ClaimType
+            claims = [
+                Claim(
+                    id=uuid.uuid4(),
+                    customer_id=customer1.id,
+                    order_id=orders[0].id,
+                    status=ClaimStatus.ESCALATED,
+                    claim_type=ClaimType.DAMAGED,
+                    fraud_score=0.1,
+                    intake_channel="whatsapp",
+                    fraud_signals={"fast_claim": True}
+                ),
+                Claim(
+                    id=uuid.uuid4(),
+                    customer_id=customer2.id,
+                    order_id=orders[2].id,
+                    status=ClaimStatus.PENDING_CLARIFICATION,
+                    claim_type=ClaimType.NOT_RECEIVED,
+                    fraud_score=0.4,
+                    intake_channel="voice",
+                    fraud_signals={"high_value": True}
+                )
+            ]
+            session.add_all(claims)
 
     await engine.dispose()
     print("✓ Seeded 3 customers and 5 orders successfully.")
