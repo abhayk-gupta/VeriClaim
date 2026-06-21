@@ -9,6 +9,7 @@ from pydantic import BaseModel, Field
 
 from app.schemas.claim import ClaimRead
 from app.schemas.order import OrderRead
+from app.schemas.customer import CustomerRead
 
 
 class InteractionLogRead(BaseModel):
@@ -46,6 +47,8 @@ class OrderTimeline(BaseModel):
 
 class ClaimDetail(ClaimRead):
     """Claim detail enriched with its audit trail and interaction events."""
+    order: Optional[OrderRead] = None
+    customer: Optional[CustomerRead] = None
     verbal_description: Optional[str] = None
     gemini_item_description: Optional[str] = None
     gemini_damage_assessment: Optional[str] = None

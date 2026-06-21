@@ -61,7 +61,7 @@ def synthesize(text: str) -> str:
 
     voice = _get_voice()
     with wave.open(str(out_path), "wb") as wav_file:
-        voice.synthesize(text, wav_file)
+        voice.synthesize_wav(text, wav_file)
     logger.info("Synthesized TTS prompt -> %s", filename)
     return filename
 

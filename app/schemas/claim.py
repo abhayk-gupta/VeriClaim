@@ -32,6 +32,8 @@ class ClaimRead(BaseModel):
     agent_reasoning: Optional[str]
     resolution_notes: Optional[str]
     resolved_at: Optional[datetime]
+    media_r2_key_item: Optional[str]
+    media_r2_key_label: Optional[str]
     created_at: datetime
 
     model_config = {"from_attributes": True}
@@ -40,7 +42,6 @@ class ClaimRead(BaseModel):
 class ClaimOverride(BaseModel):
     outcome: ClaimOutcome
     resolution_notes: str
-    resolved_by: str
 
 
 class ClaimListFilter(BaseModel):

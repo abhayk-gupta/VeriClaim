@@ -30,6 +30,7 @@ class Order(Base):
     customer_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("customers.id"), index=True)
     store_name: Mapped[str] = mapped_column(String(100))
     product_description: Mapped[str] = mapped_column(Text)
+    product_image_url: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
     order_value_usd: Mapped[Decimal] = mapped_column(Numeric(10, 2))
     currency: Mapped[str] = mapped_column(String(3), default="USD")
     status: Mapped[OrderStatus] = mapped_column(SQLEnum(OrderStatus, values_callable=lambda x: [e.value for e in x]), default=OrderStatus.PROCESSING)

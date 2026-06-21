@@ -11,6 +11,7 @@ class OrderBase(BaseModel):
     external_order_id: str
     store_name: str
     product_description: str
+    product_image_url: Optional[str] = None
     order_value_usd: Decimal
     currency: str = "USD"
     status: OrderStatus = OrderStatus.PROCESSING
